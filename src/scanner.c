@@ -21,7 +21,7 @@ bool scan(PSCANNER pScanner, PTOKEN pToken);
 
 char next_char(PSCANNER pScanner);
 void read_number(PSCANNER pScanner, PTOKEN pToken, char firstChar);
-
+const char* token_name(PTOKEN pToken);
 
 // ------------------------------------------------------------------------------------------------
 const char* token_name(PTOKEN pToken) {

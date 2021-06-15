@@ -14,4 +14,10 @@
     goto cleanup; \
 }
 
+#ifndef DEBUG
+#define DEBUG_PRINT(...)
+#else
+#define DEBUG_PRINT(...) printf(__VA_ARGS__); printf("\n")
+#endif
+
 #endif /* UTILS_H */
