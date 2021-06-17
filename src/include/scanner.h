@@ -10,6 +10,7 @@ typedef struct SCANNER {
     FILE* fd;
     char lastChar;
     bool putback;
+    unsigned int lineNum;
 } SCANNER, *PSCANNER;
 
 typedef enum TOKENTYPE {

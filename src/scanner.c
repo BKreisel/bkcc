@@ -32,6 +32,7 @@ const char* token_name(PTOKEN pToken) {
 bool init_scanner(PSCANNER pScanner, FILE* fd) {
     pScanner->fd = fd;
     pScanner->putback = false;
+    pScanner->lineNum = 1;
     return true;
 }
 
@@ -44,6 +45,10 @@ char next_char(PSCANNER pScanner) {
         pScanner->putback = false;
     } else {
         nextChar = fgetc(pScanner->fd);
+    }
+
+    if('\n' == nextChar) {
+        pScanner->lineNum++;
     }
 
     while(

@@ -35,13 +35,13 @@ PAST build_ast(PSCANNER pScanner) {
     TOKEN token = {};
 
     if(!scan(pScanner, &token)) {
-        THROW("Syntax Error: Unexpected EOF\n");
+        THROW("Syntax Error on line %d: Unexpected EOF\n", pScanner->lineNum);
     }
 
     if(TOKEN_INTEGER == token.type) {
         left = build_node(op_fromtoken(token.type), NULL, NULL, token.value);
     } else {
-        THROW("Syntax Error: expression must start with integer.");
+        THROW("Syntax Error on line %d: expression must start with integer.", pScanner->lineNum);
     }
 
     if(!scan(pScanner, &token)) {
@@ -52,7 +52,7 @@ PAST build_ast(PSCANNER pScanner) {
     rootVal = token.value;
 
     if(AST_UNKNOWN == op) {
-        THROW("Syntax Error: Unexpected AST Operator: %c", (char)token.value);
+        THROW("Syntax Error on line %d: Unexpected AST Operator: %c", pScanner->lineNum, (char)token.value);
     }
 
     right = build_ast(pScanner);
