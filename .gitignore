@@ -3,3 +3,9 @@
 
 #CTest Directory
 Testing/
+
+# Visual Studio Artifacts
+*.pdb
+
+# VS Code Settings
+.vscode/

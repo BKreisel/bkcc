@@ -4,12 +4,10 @@ C Compiler
 ## Build
 ```
 cmake -B build .
-cmake --build build -v
+cmake --build build
 ```
 
 ## Test
 ```
-cmake -B build .
-cmake --build build -v
-cmake --build build --target RUN_TESTS
+ctest --test-dir build --output-on-failure -C Debug
 ```
