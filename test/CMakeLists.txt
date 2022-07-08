@@ -8,5 +8,4 @@ target_link_libraries(test_scanner Unity)
 
 add_test(NAME scanner COMMAND test_scanner)
 
-file(MAKE_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/Debug)
-file(CREATE_LINK ${CMAKE_SOURCE_DIR}/test/input ${CMAKE_CURRENT_BINARY_DIR}/Debug/input SYMBOLIC)
+file(CREATE_LINK ${CMAKE_SOURCE_DIR}/test/input ${CMAKE_CURRENT_BINARY_DIR}/input SYMBOLIC)
