@@ -1,17 +1,17 @@
 #include<ctype.h>
 #include<stdio.h>
+#include "error.h"
 #include "scanner.h"
 
 // Prototypes -------------------------------------------------------------------------------------
 SCANNER new_scanner(FILE* fd);
+void close_scanner(PSCANNER pScanner);
 void scan(PSCANNER pScanner, PTOKEN pToken);
 const char* token_name(TOKENTYPE ttype);
-
 char next_char(PSCANNER pScanner);
 void read_number(PSCANNER pScanner, PTOKEN pToken, char firstChar);
 
-
-// Functions --------------------------------------------------------------------------------------
+// ------------------------------------------------------------------------------------------------
 SCANNER new_scanner(FILE* fd)
 {
     SCANNER s = {
@@ -22,6 +22,13 @@ SCANNER new_scanner(FILE* fd)
     return s;
 }
 
+// ------------------------------------------------------------------------------------------------
+void close_scanner(PSCANNER pScanner)
+{
+    fclose(pScanner->fd);
+}
+
+// ------------------------------------------------------------------------------------------------
 char next_char(PSCANNER pScanner)
 {
     char nextChar;
@@ -49,6 +56,7 @@ char next_char(PSCANNER pScanner)
     return nextChar;
 }
 
+// ------------------------------------------------------------------------------------------------
 void read_number(PSCANNER pScanner, PTOKEN pToken, char firstChar)
 {
     char nextChar;
@@ -71,6 +79,7 @@ void read_number(PSCANNER pScanner, PTOKEN pToken, char firstChar)
     return;
 }
 
+// ------------------------------------------------------------------------------------------------
 void scan(PSCANNER pScanner, PTOKEN pToken)
 {
     char nextChar = next_char(pScanner);
@@ -97,12 +106,19 @@ void scan(PSCANNER pScanner, PTOKEN pToken)
             pToken->type = TOKEN_MINUS;
             break;
         default:
+            set_error(ERR_TOKEN,
+                "Line %d, Col %d. Token: '%s'",
+                pScanner->lineNum,
+                pScanner->colNum,
+                nextChar
+            );
             pToken->type = TOKEN_UNKNOWN;
             pToken->value = nextChar;
     }
     return;
 }
 
+// ------------------------------------------------------------------------------------------------
 const char* token_name(TOKENTYPE ttype)
 {
     switch(ttype)

@@ -34,6 +34,8 @@ typedef struct TOKEN {
 // Create a new scanner from a file pointer
 SCANNER new_scanner(FILE* fd);
 
+void close_scanner(PSCANNER pScanner);
+
 // Return next token from the scanner.
 void scan(PSCANNER pScanner, PTOKEN pToken);
 
