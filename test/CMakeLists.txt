@@ -1,6 +1,7 @@
 add_executable(test_scanner
     test_scanner.c
     util.c
+    ${SRC}/error.c
     ${SRC}/scanner.c
 )
 target_include_directories(test_scanner PRIVATE ${HEADERS} util.h)
