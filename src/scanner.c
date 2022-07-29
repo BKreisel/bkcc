@@ -82,6 +82,7 @@ void read_number(PSCANNER pScanner, PTOKEN pToken, char firstChar)
 // ------------------------------------------------------------------------------------------------
 void scan(PSCANNER pScanner, PTOKEN pToken)
 {
+    pToken->value = 0;
     char nextChar = next_char(pScanner);
 
     if (isdigit(nextChar)) {
@@ -107,7 +108,7 @@ void scan(PSCANNER pScanner, PTOKEN pToken)
             break;
         default:
             set_error(ERR_TOKEN,
-                "Line %d, Col %d. Token: '%s'",
+                "Line %d, Col %d. Token: '%c'",
                 pScanner->lineNum,
                 pScanner->colNum,
                 nextChar

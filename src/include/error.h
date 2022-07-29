@@ -26,6 +26,9 @@ const char* error_name(ERROR err);
 // Set the error code with optional message
 void set_error(ERROR err, char* fmt, ...);
 
+// Reset the Error var to OK.
+void clear_error();
+
 // Print the current formatted error to stderr. 
 void print_error();
 
