@@ -3,12 +3,13 @@
 #include "parser.h"
 
 // Prototypes -------------------------------------------------------------------------------------
+PASTNode _build_ast(PSCANNER pScanner, PTOKEN pToken, int prev_precedence);
 PASTNode build_ast(PSCANNER pScanner);
-PASTNode _build_ast(PSCANNER pScanner);
 int interpret_ast(PASTNode root);
 PASTNode build_node(AST_OP op, PASTNode left, PASTNode right, int value);
 void free_ast(PASTNode root);
 AST_OP ast_op_fromtoken(TOKENTYPE token);
+int ast_op_precedence(AST_OP op);
 const char* ast_name(AST_OP op);
 
 // ------------------------------------------------------------------------------------------------
@@ -49,9 +50,11 @@ void free_ast(PASTNode root)
 PASTNode build_ast(PSCANNER pScanner)
 {
     PASTNode n;
+    TOKEN token;
+    scan(pScanner, &token);
     
     clear_error();
-    n = _build_ast(pScanner);
+    n = _build_ast(pScanner, &token, 0);
     if(ERR_OK != get_error())
     {
         return NULL;
@@ -59,41 +62,51 @@ PASTNode build_ast(PSCANNER pScanner)
     return n;
 }
 // ------------------------------------------------------------------------------------------------
-PASTNode _build_ast(PSCANNER pScanner)
+PASTNode _build_ast(PSCANNER pScanner, PTOKEN pToken, int prev_precedence)
 {
     PASTNode left, right;
-    TOKEN token;
     AST_OP op;
+    int precedence;
     
-    // Left
-    scan(pScanner, &token);
-
-    if(TOKEN_EOF == token.type) {
-        return NULL;
-    }
-    op = ast_op_fromtoken(token.type);
+    op = ast_op_fromtoken(pToken->type);
     if(AST_INTEGER != op) {
-        set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d). Wanted INT", ast_name(op), token.value);
+        set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d). Wanted INT", ast_name(op), pToken->value);
         return NULL;
     }
-
-    left = build_node(op, NULL, NULL, token.value);
+    left = build_node(op, NULL, NULL, pToken->value);
     
-    // Current
-    scan(pScanner, &token);
-    if(TOKEN_EOF == token.type) {
+    scan(pScanner, pToken);
+    if(TOKEN_EOF == pToken->type) {
         return left;
     }
-    op = ast_op_fromtoken(token.type);
-    if(AST_UNKNOWN == op || AST_INTEGER == op) {
-        set_error(ERR_AST_OP, "Bad AST Operator: %s (%d)", ast_name(op), token.value);
-        return NULL;
+
+    op = ast_op_fromtoken(pToken->type);
+    precedence = ast_op_precedence(op);
+    if (0 == precedence)
+    {
+        set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d).", ast_name(op), pToken->value);
+        return NULL; 
     }
 
-    //Right
-    right = _build_ast(pScanner);
-    
-    return build_node(op, left, right, token.value);
+    while(precedence > prev_precedence) {
+        scan(pScanner, pToken);
+
+        right = _build_ast(pScanner, pToken, precedence);
+        left = build_node(op, left, right, 0);
+
+        op = ast_op_fromtoken(pToken->type);
+        precedence = ast_op_precedence(op);
+        if(TOKEN_EOF == pToken->type) {
+           return left;
+        }
+        if (0 == precedence)
+        {
+            set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d).", ast_name(op), pToken->value);
+            return NULL; 
+        }    
+    }
+
+    return left;
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -146,7 +159,23 @@ AST_OP ast_op_fromtoken(TOKENTYPE token)
     }
     return AST_UNKNOWN;
 }
-   
+
+// ------------------------------------------------------------------------------------------------
+int ast_op_precedence(AST_OP op)
+{
+    switch(op)
+    {
+        case AST_ADD:
+        case AST_SUB:
+            return 10;
+        case AST_MULTIPLY:
+        case AST_DIVIDE:
+            return 20;
+        default:
+            return 0;
+    }
+}
+
 // ------------------------------------------------------------------------------------------------
 const char* ast_name(AST_OP op)
 {

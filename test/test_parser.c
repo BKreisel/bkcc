@@ -25,6 +25,7 @@ void setUp(void)
 
     scan5 = scanner_frompath("input/5.txt");
     pAST5 = build_ast(&scan5);
+
 };
 
 // ------------------------------------------------------------------------------------------------
@@ -45,52 +46,42 @@ void tearDown(void) {
 void struct1(void)
 {
     // 2 + 3 * 5 - 8 / 3
-    PASTNode pNode = pAST1;
-    
-    // 2 +
+    PASTNode root = pAST1;
+    PASTNode pNode = root;
+    /*
+             -
+            /  \
+           /    \
+          +     '/' 
+         / \    / \
+        2   *  8   3
+           / \    
+          3   5
+    */
+
+    TEST_ASSERT_EQUAL_UINT(AST_SUB, root->op);
+
+    // Left
+    pNode = root->lchild;
     TEST_ASSERT_EQUAL_UINT(AST_ADD, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(2, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-    
-    // 3 *
+    TEST_ASSERT_EQUAL_UINT(2, pNode->lchild->value);
     pNode = pNode->rchild;
     TEST_ASSERT_EQUAL_UINT(AST_MULTIPLY, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
     TEST_ASSERT_EQUAL_INT(3, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 5 -
-    pNode = pNode->rchild;
-    TEST_ASSERT_EQUAL_UINT(AST_SUB, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(5, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 8 /
-    pNode = pNode->rchild;
+    TEST_ASSERT_EQUAL_INT(5, pNode->rchild->value);
+    
+    //Right
+    pNode = root->rchild;
     TEST_ASSERT_EQUAL_UINT(AST_DIVIDE, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
     TEST_ASSERT_EQUAL_INT(8, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 3
-    pNode = pNode->rchild;
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->op);
-    TEST_ASSERT_EQUAL_INT(3, pNode->value);
-    TEST_ASSERT_NULL(pNode->lchild);
-    TEST_ASSERT_NULL(pNode->rchild);
+    TEST_ASSERT_EQUAL_INT(3, pNode->rchild->value);
 }
 
 // ------------------------------------------------------------------------------------------------
 void parse1(void)
 {
     // 2 + 3 * 5 - 8 / 3
-    TEST_ASSERT_EQUAL_INT(11, interpret_ast(pAST1));
+    TEST_ASSERT_EQUAL_INT(15, interpret_ast(pAST1));
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -102,54 +93,38 @@ void struct2(void)
             +
         08 / 3
     */
-
-    PASTNode pNode = pAST2;
+    PASTNode root = pAST2;
+    PASTNode pNode = root;
+    /*
+                 +
+                /  \
+               /    \
+              /      \
+             +      '/'
+            / \     / \
+           /   \   8   3
+          -     *
+         / \   / \    
+        13  6 4   5
+    */
     
-    // 13 -
-    TEST_ASSERT_EQUAL_UINT(AST_SUB, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(13, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-    
-    // 6 +
-    pNode = pNode->rchild;
+    TEST_ASSERT_EQUAL_UINT(AST_ADD, root->op);
+
+    // Left
+    pNode = root->lchild;
     TEST_ASSERT_EQUAL_UINT(AST_ADD, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(6, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
+    TEST_ASSERT_EQUAL_UINT(AST_SUB, pNode->lchild->op);
+    TEST_ASSERT_EQUAL_UINT(13, pNode->lchild->lchild->value);
+    TEST_ASSERT_EQUAL_UINT(6, pNode->lchild->rchild->value);
+    TEST_ASSERT_EQUAL_UINT(AST_MULTIPLY, pNode->rchild->op);
+    TEST_ASSERT_EQUAL_UINT(4, pNode->rchild->lchild->value);
+    TEST_ASSERT_EQUAL_UINT(5, pNode->rchild->rchild->value);
 
-    // 4 *
-    pNode = pNode->rchild;
-    TEST_ASSERT_EQUAL_UINT(AST_MULTIPLY, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(4, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 5 +
-    pNode = pNode->rchild;
-    TEST_ASSERT_EQUAL_UINT(AST_ADD, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
-    TEST_ASSERT_EQUAL_INT(5, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 8 /
-    pNode = pNode->rchild;
+    //Right
+    pNode = root->rchild;
     TEST_ASSERT_EQUAL_UINT(AST_DIVIDE, pNode->op);
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->lchild->op);
     TEST_ASSERT_EQUAL_INT(8, pNode->lchild->value);
-    TEST_ASSERT_NULL(pNode->lchild->lchild);
-    TEST_ASSERT_NULL(pNode->lchild->rchild);
-
-    // 3
-    pNode = pNode->rchild;
-    TEST_ASSERT_EQUAL_UINT(AST_INTEGER, pNode->op);
-    TEST_ASSERT_EQUAL_INT(3, pNode->value);
-    TEST_ASSERT_NULL(pNode->lchild);
-    TEST_ASSERT_NULL(pNode->rchild);
+    TEST_ASSERT_EQUAL_INT(3, pNode->rchild->value);
 }
 
 // ------------------------------------------------------------------------------------------------
@@ -161,7 +136,7 @@ void parse2(void)
             +
         08 / 3
     */
-    TEST_ASSERT_EQUAL_INT(-21, interpret_ast(pAST2));
+    TEST_ASSERT_EQUAL_INT(29, interpret_ast(pAST2));
 }
 
 // ------------------------------------------------------------------------------------------------
