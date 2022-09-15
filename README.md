@@ -1,5 +1,13 @@
 # bkcc
-C Compiler
+Minimal C Compiler
+
+
+
+## Requirements
+* WSL2 or Linux OS
+```
+aptitude install gcc cmake build-essential nasm gdb
+```
 
 ## Build
 ```
@@ -9,5 +17,5 @@ cmake --build build
 
 ## Test
 ```
-ctest --test-dir build --output-on-failure -C Debug
+ctest -j8 -C Debug -T test --output-on-failure --test-dir build
 ```

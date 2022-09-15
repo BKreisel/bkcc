@@ -18,7 +18,8 @@ void setUp(void)
 };
 
 // ------------------------------------------------------------------------------------------------
-void tearDown(void) {
+void tearDown(void)
+{
     close_scanner(&scanner1);
     close_scanner(&scanner2);
     close_scanner(&scanner3);

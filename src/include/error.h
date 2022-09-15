@@ -6,12 +6,16 @@ typedef enum ERROR {
 
     // Generic
     ERR_ALLOC,
+    ERR_FOPEN,
 
     // Scanner
     ERR_TOKEN,
 
     // Parser
     ERR_AST_OP,
+
+    // Compiler
+    ERR_COMPILER,
 
 } ERROR, *PERROR;
 

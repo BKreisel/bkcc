@@ -49,11 +49,15 @@ const char* error_name(ERROR err)
     switch(_err)
     {
         case ERR_ALLOC:
-            return "Memory Allocation";
+            return "Memory allocation";
+        case ERR_FOPEN:
+            return "Failed to open file";
         case ERR_TOKEN:
-            return "Bad Token";
+            return "Bad token";
         case ERR_AST_OP:
-            return "Bad AST Operand";
+            return "Bad AST operand";
+        case ERR_COMPILER:
+            return "Compiler Error";
     }
     return "Unknown Error type";
 }

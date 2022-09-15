@@ -24,6 +24,7 @@ PASTNode build_node(AST_OP op, PASTNode left, PASTNode right, int value)
         node->value = value;
     } else {
         set_error(ERR_ALLOC, "calloc for an AST node failed");
+        return NULL;
     }
     return node;
 }
@@ -70,7 +71,7 @@ PASTNode _build_ast(PSCANNER pScanner, PTOKEN pToken, int prev_precedence)
     
     op = ast_op_fromtoken(pToken->type);
     if(AST_INTEGER != op) {
-        set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d). Wanted INT", ast_name(op), pToken->value);
+        set_error(ERR_AST_OP, "Unexpected AST operator: %s (%d). Wanted INT", ast_name(op), pToken->value);
         return NULL;
     }
     left = build_node(op, NULL, NULL, pToken->value);
@@ -84,7 +85,7 @@ PASTNode _build_ast(PSCANNER pScanner, PTOKEN pToken, int prev_precedence)
     precedence = ast_op_precedence(op);
     if (0 == precedence)
     {
-        set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d).", ast_name(op), pToken->value);
+        set_error(ERR_AST_OP, "Unexpected AST operator: %s (%d).", ast_name(op), pToken->value);
         return NULL; 
     }
 
@@ -101,7 +102,7 @@ PASTNode _build_ast(PSCANNER pScanner, PTOKEN pToken, int prev_precedence)
         }
         if (0 == precedence)
         {
-            set_error(ERR_AST_OP, "Unexpected AST Operator: %s (%d).", ast_name(op), pToken->value);
+            set_error(ERR_AST_OP, "Unexpected AST operator: %s (%d).", ast_name(op), pToken->value);
             return NULL; 
         }    
     }

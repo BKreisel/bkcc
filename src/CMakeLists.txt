@@ -1,5 +1,7 @@
 add_executable(bkcc
     main.c
+    amd64.c
+    compiler.c
     error.c
     scanner.c
     parser.c

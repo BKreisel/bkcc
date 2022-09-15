@@ -29,7 +29,8 @@ void setUp(void)
 };
 
 // ------------------------------------------------------------------------------------------------
-void tearDown(void) {
+void tearDown(void)
+{
     free_ast(pAST1);
     close_scanner(&scan1);
     free_ast(pAST2);
